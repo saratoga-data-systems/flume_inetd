@@ -8,6 +8,7 @@
 *.pgd
 *.ncb
 *.idb
+*.db
 *.pch
 *.exp
 BuildLog.htm
@@ -28,6 +29,7 @@ mt.dep
 
 *.user
 
+ipch/
 Debug/
 Release/
 *.sdf
