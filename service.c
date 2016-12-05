@@ -1,5 +1,6 @@
 /*
  *  WinInetd by Davide Libenzi ( Inetd-like daemon for Windows )
+ *  Modified 2016 by Saratoga Data Systems, Inc.
  *  Copyright 2013  Ilya Basin
  *  Copyright (C) 2003  Davide Libenzi
  *
@@ -93,7 +94,7 @@ int main(int argc, char const *argv[]) {
 
 	winet_argc = argc;
 	winet_argv = argv;
-	printf("(%s) version %s by Davide Libenzi <davidel@xmailserver.org>\n",
+	printf("(%s) version %s by Saratoga Data Systems, Inc.\n",
 	       WINET_APPNAME, WINET_VERSION);
 
 	if (argc > 1) {

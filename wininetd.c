@@ -1,5 +1,6 @@
 /*
  *  WinInetd by Davide Libenzi ( Inetd-like daemon for Windows )
+ *  Modified by Saratoga Data Systems, Inc.
  *  Copyright 2013  Ilya Basin
  *  Copyright (C) 2003  Davide Libenzi
  *
@@ -20,6 +21,9 @@
  *  Davide Libenzi <davidel@xmailserver.org>
  *
  */
+
+/* eliminate warning from use of legacy inet_ntoa(addr) */
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 #include <winsock2.h>
 #include <windows.h>
@@ -45,7 +49,7 @@
 #define WINET_LOG_ERROR 3
 
 #define MAX_PMAPS 128
-#define CFGFILENAME "wininetd.conf"
+#define CFGFILENAME "C:\\Flume\\etc\\flume_inetd.conf"
 #define ACCEPT_TIMEOUT 4
 #define LSN_BKLOG 128
 
@@ -759,9 +763,6 @@ int winet_main(int argc, char const **argv) {
 
 	}
 	if (!cfgfile) {
-		i = (int) GetWindowsDirectoryA(cfgpath, sizeof(cfgpath) - sizeof(CFGFILENAME) - 1);
-		if (cfgpath[i - 1] != '\\')
-			strcat(cfgpath, "\\");
 		strcat(cfgpath, CFGFILENAME);
 		cfgfile = cfgpath;
 	}
