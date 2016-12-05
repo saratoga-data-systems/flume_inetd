@@ -22,6 +22,8 @@
  *
  */
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
@@ -60,7 +62,8 @@ static int dbgsvc = 0;
 
 
 static char **get_ascii_argv(int argc, LPWSTR *argv) {
-	int i, len;
+    int i;
+    size_t len;
 	char *ptr, *top;
 	char **aargv;
 
@@ -74,7 +77,7 @@ static char **get_ascii_argv(int argc, LPWSTR *argv) {
 	ptr += (argc + 1) * sizeof(char *);
 	for (i = 0; i < argc; i++) {
 		len = wcslen(argv[i]);
-		if (!(len = WideCharToMultiByte(CP_ACP, 0, argv[i], len, ptr, (int) (top - ptr), NULL, NULL))) {
+		if (!(len = WideCharToMultiByte(CP_ACP, 0, argv[i], (int) len, ptr, (int) (top - ptr), NULL, NULL))) {
 			free(aargv);
 			return NULL;
 		}
