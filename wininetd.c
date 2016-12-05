@@ -24,6 +24,9 @@
 
 /* eliminate warning from use of legacy inet_ntoa(addr) */
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
+
+#pragma comment(lib, "ws2_32.lib")
 
 #include <winsock2.h>
 #include <windows.h>
@@ -104,7 +107,7 @@ static int stopsvc;
 static _TCHAR *winet_a2t(char const *str, _TCHAR *buf, int size) {
 
 #ifdef _UNICODE
-	MultiByteToWideChar(CP_ACP, 0, str, strlen(str), buf, size);
+	MultiByteToWideChar(CP_ACP, 0, str, (int) strlen(str), buf, size);
 #else
 	strncpy(buf, str, size);
 #endif
@@ -159,7 +162,7 @@ static void __pWin32Error(int level, DWORD eNum, const char* fmt, va_list args)
 		u = FormatMessageA( FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 															NULL, eNum,
 															MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-															pend - count, count, NULL );
+															pend - count, (DWORD) count, NULL );
 		if (u == 0) {
 			u = (unsigned)_snprintf(pend - count, count, "0x%08x (%d)", eNum, eNum);
 		}
@@ -350,9 +353,9 @@ static int winet_load_cfg(char const *cfgfile) {
 			if (*cmdline) {
 				if ((pass = strchr(user, ':')) != NULL)
 					*pass++ = '\0';
-				pmaps[npmaps].cmdline = strdup(cmdline);
-				pmaps[npmaps].user = strdup(user);
-				pmaps[npmaps].pass = pass ? strdup(pass): NULL;
+				pmaps[npmaps].cmdline = _strdup(cmdline);
+				pmaps[npmaps].user = _strdup(user);
+				pmaps[npmaps].pass = pass ? _strdup(pass): NULL;
 				pmaps[npmaps].sock = -1;
 				npmaps++;
 			}
@@ -442,7 +445,7 @@ static void winet_cleanup(void) {
 
 
 static char *winet_get_syserror(void) {
-	int len;
+	size_t len;
 	LPVOID msg;
 	char *emsg;
 
@@ -457,7 +460,7 @@ static char *winet_get_syserror(void) {
 		0,
 		NULL);
 
-	emsg = strdup((char *) msg);
+	emsg = _strdup((char *) msg);
 
 	LocalFree(msg);
 
