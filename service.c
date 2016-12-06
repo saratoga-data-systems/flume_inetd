@@ -219,7 +219,7 @@ static int install_service(void) {
 				       SERVICE_ALL_ACCESS, SERVICE_WIN32_OWN_PROCESS, SERVICE_AUTO_START,
 				       SERVICE_ERROR_NORMAL, path, NULL, NULL, _TEXT(SVCDEPS), NULL, NULL);
 
-		if (schsvc) {
+        if (schsvc) {
             SERVICE_DESCRIPTION sd;
             LPTSTR szDesc = TEXT("Flume inetd daemon");
 
@@ -234,7 +234,12 @@ static int install_service(void) {
                 printf("ChangeServiceConfig2 failed\n");
             }
 
-			_tprintf(_TEXT("%s installed.\n"), _TEXT(WINET_APPNAME));
+            _tprintf(_TEXT("%s installed.\n"), _TEXT(WINET_APPNAME));
+
+            if (StartService(schsvc, 0, NULL)) {
+                _tprintf(_TEXT("%s started.\n"), _TEXT(WINET_APPNAME));
+            }
+
 			CloseServiceHandle(schsvc);
 		} else
 			_tprintf(_TEXT("CreateService failed - %s\n"),
