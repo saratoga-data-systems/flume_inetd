@@ -766,7 +766,7 @@ int winet_main(int argc, char const **argv) {
 
 	}
 	if (!cfgfile) {
-		strcat(cfgpath, CFGFILENAME);
+		strcpy(cfgpath, CFGFILENAME);
 		cfgfile = cfgpath;
 	}
 

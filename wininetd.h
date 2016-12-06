@@ -26,7 +26,7 @@
 #define _WININETD_H
 
 
-#define WINET_APPNAME "flume_netd"
+#define WINET_APPNAME "flume_inetd"
 #define WINET_VERSION "0.7.1p.a" /* 'pump' or 'pipes' */
 
 
