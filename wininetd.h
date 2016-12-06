@@ -27,7 +27,7 @@
 
 
 #define WINET_APPNAME "flume_inetd"
-#define WINET_VERSION "0.7.1p.a" /* 'pump' or 'pipes' */
+#define WINET_VERSION "0.7.3p.a" /* 'pump' or 'pipes' */
 
 
 #define COUNTOF(a) (sizeof(a) / sizeof(a[0]))

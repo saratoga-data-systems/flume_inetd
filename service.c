@@ -216,10 +216,24 @@ static int install_service(void) {
 
 	if ((schscm = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS)) != NULL) {
 		schsvc = CreateService(schscm, _TEXT(WINET_APPNAME), _TEXT(WINET_APPNAME),
-				       SERVICE_ALL_ACCESS, SERVICE_WIN32_OWN_PROCESS, SERVICE_DEMAND_START,
+				       SERVICE_ALL_ACCESS, SERVICE_WIN32_OWN_PROCESS, SERVICE_AUTO_START,
 				       SERVICE_ERROR_NORMAL, path, NULL, NULL, _TEXT(SVCDEPS), NULL, NULL);
 
 		if (schsvc) {
+            SERVICE_DESCRIPTION sd;
+            LPTSTR szDesc = TEXT("Flume inetd daemon");
+
+            // Change the service description.
+
+            sd.lpDescription = szDesc;
+
+            if (!ChangeServiceConfig2(
+                schsvc,                     // handle to service
+                SERVICE_CONFIG_DESCRIPTION, // change: description
+                &sd)) {                     // new description
+                printf("ChangeServiceConfig2 failed\n");
+            }
+
 			_tprintf(_TEXT("%s installed.\n"), _TEXT(WINET_APPNAME));
 			CloseServiceHandle(schsvc);
 		} else

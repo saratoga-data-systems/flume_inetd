@@ -26,6 +26,8 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 
+#pragma comment(lib, "odbc32.lib")
+#pragma comment(lib, "odbccp32.lib")
 #pragma comment(lib, "ws2_32.lib")
 
 #include <winsock2.h>
@@ -107,6 +109,7 @@ static int stopsvc;
 static _TCHAR *winet_a2t(char const *str, _TCHAR *buf, int size) {
 
 #ifdef _UNICODE
+
 	MultiByteToWideChar(CP_ACP, 0, str, (int) strlen(str), buf, size);
 #else
 	strncpy(buf, str, size);
