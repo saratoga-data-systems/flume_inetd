@@ -1,6 +1,6 @@
 /*
  *  WinInetd by Davide Libenzi ( Inetd-like daemon for Windows )
- *  Modified by Saratoga Data Systems, Inc.
+ *  Modified 2018 by Saratoga Data Systems, Inc.
  *  Copyright 2013  Ilya Basin
  *  Copyright (C) 2003  Davide Libenzi
  *
@@ -414,6 +414,14 @@ static int winet_create_listeners(void) {
 
 		memset(&saddr, 0, sizeof(saddr));
 		saddr.sin_addr.S_un.S_addr = INADDR_ANY;
+#if defined(STIG)
+        if (pmaps[i].port != 44344) {
+            winet_log(WINET_LOG_ERROR,
+                     "Only port 44344 is allowed in STIG mode\n",
+                     WINET_APPNAME);
+            return -1;
+        }
+#endif
 		saddr.sin_port = htons((short int) pmaps[i].port);
 		saddr.sin_family = AF_INET;
 
