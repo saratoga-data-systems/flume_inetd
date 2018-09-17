@@ -1,6 +1,6 @@
 /*
  *  WinInetd by Davide Libenzi ( Inetd-like daemon for Windows )
- *  Modified 2016 by Saratoga Data Systems, Inc.
+ *  Modified 2018 by Saratoga Data Systems, Inc.
  *  Copyright 2013  Ilya Basin
  *  Copyright (C) 2003  Davide Libenzi
  *
@@ -25,19 +25,12 @@
 #if !defined(_WININETD_H)
 #define _WININETD_H
 
-
 #define WINET_APPNAME "flume_inetd"
-#define WINET_VERSION "0.7.3p.a" /* 'pump' or 'pipes' */
-
+#define WINET_VERSION "0.7.4-p"
 
 #define COUNTOF(a) (sizeof(a) / sizeof(a[0]))
-
-
 
 int winet_stop_service(void);
 int winet_main(int argc, char const **argv);
 
-
-
 #endif /* #if !defined(_WININETD_H) */
-
