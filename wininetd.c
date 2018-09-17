@@ -99,7 +99,7 @@ static size_t envSnapshotNBytes;
 static int npmaps = 0;
 static portmap_t pmaps[MAX_PMAPS];
 static int sk_timeout = -1;
-static int linger_timeo = 10;
+static int linger_timeo = 1;
 static int stopsvc;
 
 static char *timestamp(void) {
