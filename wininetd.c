@@ -55,7 +55,7 @@
 #define WINET_LOG_ERROR 3
 
 #define MAX_PMAPS 128
-#define CFGFILENAME "C:\\Flume\\etc\\flume_inetd.conf"
+#define CFGFILENAME "C:\\ProgramData\\SaratogaDataSystems\\etc\\flume_inetd.conf"
 #define ACCEPT_TIMEOUT 4
 #define LSN_BKLOG 128
 

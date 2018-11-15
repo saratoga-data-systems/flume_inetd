@@ -26,7 +26,7 @@
 #define _WININETD_H
 
 #define WINET_APPNAME "flume_inetd"
-#define WINET_VERSION "0.7.4-p"
+#define WINET_VERSION "0.7.5-p"
 
 #define COUNTOF(a) (sizeof(a) / sizeof(a[0]))
 
