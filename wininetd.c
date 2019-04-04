@@ -515,7 +515,8 @@ static int winet_user_handle(portmap_t *pm, HANDLE *husr) {
 static int winet_create_stdhandles(HANDLE *in, HANDLE *out, HANDLE *err,
                                    HANDLE *pPipeOurWrite,
                                    HANDLE *pPipeOurRead) {
-  HANDLE s2p_their, p2s_their;
+  HANDLE s2p_their = NULL;
+  HANDLE p2s_their = NULL;
 
   if (!CreatePipe(&s2p_their, pPipeOurWrite, NULL, 0)) {
     pWin32Error("CreatePipe() failed");
@@ -539,6 +540,7 @@ static int winet_create_stdhandles(HANDLE *in, HANDLE *out, HANDLE *err,
   }
 
   CloseHandle(p2s_their);
+  p2s_their = NULL;
 
   if (!DuplicateHandle(GetCurrentProcess(), s2p_their, GetCurrentProcess(), in,
                        0, TRUE, DUPLICATE_SAME_ACCESS)) {
@@ -554,7 +556,7 @@ err5:
 err4:
   CloseHandle(*err);
 err3:
-  CloseHandle(p2s_their);
+  if (p2s_their) CloseHandle(p2s_their);
   CloseHandle(*pPipeOurRead);
 err2:
   CloseHandle(*pPipeOurWrite);
