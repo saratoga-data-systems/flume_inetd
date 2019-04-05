@@ -58,27 +58,23 @@ static int dbgsvc = 0;
 
 static char **get_ascii_argv(int argc, LPWSTR *argv) {
   int i;
-  size_t len;
-  char *ptr, *top;
+  size_t wlen;
+  int len;
   char **aargv;
 
-  len = (argc + 1) * sizeof(char *);
-  for (i = 0; i < argc; i++) len += wcslen(argv[i]) + 2 * sizeof(char);
-  if (!(ptr = (char *)malloc(len))) return NULL;
-  top = ptr + len;
-  aargv = (char **)ptr;
-  ptr += (argc + 1) * sizeof(char *);
+  if (!(aargv = (char **)malloc(sizeof(char *) * ((size_t)argc + 1)))) return NULL;
+  aargv[argc] = NULL;
   for (i = 0; i < argc; i++) {
-    len = wcslen(argv[i]);
-    if (!(len = WideCharToMultiByte(CP_ACP, 0, argv[i], (int)len, ptr,
-                                    (int)(top - ptr), NULL, NULL))) {
-      free(aargv);
+    wlen = wcslen(argv[i]);
+    // get length for the converted arg
+    if (!(len = WideCharToMultiByte(CP_ACP, 0, argv[i], (int)wlen, NULL, 0, NULL, NULL))) {
       return NULL;
     }
-    aargv[i] = ptr;
-    ptr += len;
+    if (!(*(aargv + i) = (char *)malloc(len))) return NULL;
+    if (!WideCharToMultiByte(CP_ACP, 0, argv[i], (int)wlen, *(aargv + i), len, NULL, NULL)) {
+      return NULL;
+    }
   }
-  aargv[i] = NULL;
   return aargv;
 }
 
