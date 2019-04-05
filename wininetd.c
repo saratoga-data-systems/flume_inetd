@@ -326,8 +326,8 @@ static int winet_log(int level, char const *fmt, ...) {
 
 static int winet_load_cfg(char const *cfgfile) {
   FILE *file;
-  char *cmdline, *user, *pass;
-  char cfgline[1024];
+  unsigned char *cmdline, *user, *pass;
+  unsigned char cfgline[1024];
 
   if (!(file = fopen(cfgfile, "rt"))) {
     winet_log(WINET_LOG_ERROR, "[%s] unable to open config file: file='%s'\n",
@@ -809,7 +809,7 @@ int winet_main(int argc, char const **argv) {
   }
   lpszVariable = envSnapshot;
   while (*lpszVariable) {
-    lpszVariable += lstrlen(lpszVariable) + 1;
+    lpszVariable += (size_t)lstrlen(lpszVariable) + 1;
   }
   envSnapshotNBytes = (lpszVariable - envSnapshot) * sizeof(TCHAR);
 
