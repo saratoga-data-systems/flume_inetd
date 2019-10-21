@@ -7,6 +7,6 @@ C:\Flume\etc\flume_inetd.conf for the configuration file for the service.
 
 Changes were renaming the service from wininetd to flume_inetd, as well as the
 above listed configuration changes. We are using a 64 bit release build from
-VS2017 with Flume. The original html file is still included here in the repo.
+VS2019 with Flume. The original html file is still included here in the repo.
 
 This repo resides at https://github.com/saratoga-data-systems/flume_inetd.git
