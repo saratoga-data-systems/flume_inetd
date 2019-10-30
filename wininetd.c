@@ -1,6 +1,6 @@
 /*
  *  WinInetd by Davide Libenzi ( Inetd-like daemon for Windows )
- *  Modified 2018 by Saratoga Data Systems, Inc.
+ *  Modified 2018, 2109 by Saratoga Data Systems, Inc.
  *  Copyright 2013  Ilya Basin
  *  Copyright (C) 2003  Davide Libenzi
  *

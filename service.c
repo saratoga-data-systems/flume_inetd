@@ -35,7 +35,8 @@
 #include <string.h>
 #include "wininetd.h"
 
-#define SVCDEPS ""
+// depend both on the TCP/IP stack and the Ancillary Function Driver for Winsock
+#define SVCDEPS "Tcpip\0Afd\0\0"
 
 static char **get_ascii_argv(int argc, LPWSTR *argv);
 static void WINAPI service_main(DWORD argc, LPTSTR *argv);
@@ -203,18 +204,44 @@ static int install_service(void) {
                            NULL, _TEXT(SVCDEPS), NULL, NULL);
 
     if (schsvc) {
+      // Change the service description.
       SERVICE_DESCRIPTION sd;
       LPTSTR szDesc = TEXT("Flume inetd daemon");
-
-      // Change the service description.
-
       sd.lpDescription = szDesc;
 
       if (!ChangeServiceConfig2(
               schsvc,                      // handle to service
               SERVICE_CONFIG_DESCRIPTION,  // change: description
               &sd)) {                      // new description
-        printf("ChangeServiceConfig2 failed\n");
+        printf("ChangeServiceConfig2 description failed\n");
+      }
+
+      // Change the restart behavior
+      SC_ACTION sa;
+      sa.Type = SC_ACTION_RESTART;
+      sa.Delay = 1 * 60 * 1000; // 1 minute in msec
+      SERVICE_FAILURE_ACTIONS sfa;
+      sfa.dwResetPeriod = INFINITE;
+      sfa.lpRebootMsg = NULL;
+      sfa.lpCommand = NULL;
+      sfa.cActions = 1;
+      sfa.lpsaActions = &sa;
+
+      if (!ChangeServiceConfig2(
+              schsvc,                          // handle to service
+              SERVICE_CONFIG_FAILURE_ACTIONS,  // change: failure actions
+              &sfa)) {
+        printf("ChangeServiceConfig2 failure actions failed\n");
+      }
+
+      SERVICE_FAILURE_ACTIONS_FLAG sfaf;
+      sfaf.fFailureActionsOnNonCrashFailures = TRUE;
+
+      if (!ChangeServiceConfig2(
+              schsvc,                               // handle to service
+              SERVICE_CONFIG_FAILURE_ACTIONS_FLAG,  // change: failure actions
+              &sfaf)) {
+        printf("ChangeServiceConfig2 failure actions flag failed\n");
       }
 
       _tprintf(_TEXT("%s installed.\n"), _TEXT(WINET_APPNAME));
