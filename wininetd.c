@@ -29,7 +29,7 @@
 #pragma comment(lib, "odbc32.lib")
 #pragma comment(lib, "odbccp32.lib")
 #pragma comment(lib, "ws2_32.lib")
-//#pragma comment(lib, "shlwapi.lib")
+// #pragma comment(lib, "shlwapi.lib")
 
 #include <winsock2.h>
 
@@ -37,7 +37,7 @@
 
 #include <tchar.h>
 
-//#include <Shlobj.h>
+// #include <Shlobj.h>
 
 #include "wininetd.h"
 
@@ -59,7 +59,8 @@
 #define WINET_LOG_ERROR 3
 
 #define MAX_PMAPS 128
-#define CFGFILENAME "C:\\ProgramData\\SaratogaDataSystems\\etc\\flume_inetd.conf"
+#define CFGFILENAME                                                            \
+  "C:\\ProgramData\\SaratogaDataSystems\\etc\\flume_inetd.conf"
 #define ACCEPT_TIMEOUT 4
 #define LSN_BKLOG 128
 
@@ -129,7 +130,8 @@ static int _winet_log(int level, char const *emsg) {
   printf("%s", emsg);
   fflush(stdout);
 
-  if (level == WINET_LOG_ERROR) winet_evtlog(emsg, EVENTLOG_ERROR_TYPE);
+  if (level == WINET_LOG_ERROR)
+    winet_evtlog(emsg, EVENTLOG_ERROR_TYPE);
 
   return 0;
 }
@@ -137,10 +139,10 @@ static int _winet_log(int level, char const *emsg) {
 static char *cleanstr(char *s) {
   while (*s) {
     switch ((int)*s) {
-      case 13:
-      case 10:
-        *s = ' ';
-        break;
+    case 13:
+    case 10:
+      *s = ' ';
+      break;
     }
     s++;
   }
@@ -156,20 +158,23 @@ static void __pWin32Error(int level, DWORD eNum, const char *fmt,
 
   do {
     u = (unsigned)_snprintf(pend - count, count, "[%s] ", WINET_APPNAME);
-    if (u >= count) break;
+    if (u >= count)
+      break;
     count -= u;
 
     u = (unsigned)_vsnprintf(pend - count, count, fmt, args);
-    if (u >= count) break;
+    if (u >= count)
+      break;
     count -= u;
 
     u = (unsigned)_snprintf(pend - count, count, ": ");
-    if (u >= count) break;
+    if (u >= count)
+      break;
     count -= u;
 
     u = FormatMessageA(
         FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, eNum,
-        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),  // Default language
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
         pend - count, (DWORD)count, NULL);
     if (u == 0) {
       u = (unsigned)_snprintf(pend - count, count, "0x%08x (%d)", eNum, eNum);
@@ -231,7 +236,8 @@ static int pump_s2p(SOCKET sRead, HANDLE hWrite) {
       pWinsockError("recv() failed");
       return -1;
     }
-    if (nr == 0) break;
+    if (nr == 0)
+      break;
     pend = buf + nr;
     for (p = buf; p < pend; p += nw, nr -= nw) {
       if (!WriteFile(hWrite, p, nr, &nw, NULL)) {
@@ -254,7 +260,8 @@ static int pump_p2s(HANDLE hRead, SOCKET sWrite) {
       pWin32Error("ReadFile() failed");
       return -1;
     }
-    if (nr == 0) break;
+    if (nr == 0)
+      break;
     pend = buf + nr;
     for (p = buf; p < pend; p += nw, nr -= nw) {
       nw = send(sWrite, p, nr, 0);
@@ -272,7 +279,8 @@ static DWORD WINAPI thr_p2s(LPVOID lpThreadParameter) {
   thread_data_t *thd = (thread_data_t *)lpThreadParameter;
 
   DWORD tid = GetCurrentThreadId();
-  winet_log(WINET_LOG_MESSAGE, "[%s] %s: thread (%d) started\n", WINET_APPNAME, timestamp(), tid);
+  winet_log(WINET_LOG_MESSAGE, "[%s] %s: thread (%d) started\n", WINET_APPNAME,
+            timestamp(), tid);
 
   rc = pump_p2s(thd->hPipeOurRead, thd->asock);
   if (rc != -2) {
@@ -340,7 +348,8 @@ static int winet_load_cfg(char const *cfgfile) {
   }
   for (npmaps = 0; fgets(cfgline, sizeof(cfgline) - 1, file);) {
     cfgline[strlen(cfgline) - 1] = '\0';
-    if (!isdigit(cfgline[0])) continue;
+    if (!isdigit(cfgline[0]))
+      continue;
     pmaps[npmaps].port = atoi(cfgline);
 
     for (user = cfgline; isdigit(*user) || strchr(" \t", *user); user++)
@@ -352,7 +361,8 @@ static int winet_load_cfg(char const *cfgfile) {
       for (; strchr(" \t", *cmdline); cmdline++)
         ;
       if (*cmdline) {
-        if ((pass = strchr(user, ':')) != NULL) *pass++ = '\0';
+        if ((pass = strchr(user, ':')) != NULL)
+          *pass++ = '\0';
         pmaps[npmaps].cmdline = _strdup(cmdline);
         pmaps[npmaps].user = _strdup(user);
         pmaps[npmaps].pass = pass ? _strdup(pass) : NULL;
@@ -467,8 +477,10 @@ static void winet_cleanup(void) {
 
   for (i = 0; i < npmaps; i++) {
     closesocket(pmaps[i].sock);
-    if (pmaps[i].user) free(pmaps[i].user);
-    if (pmaps[i].pass) free(pmaps[i].pass);
+    if (pmaps[i].user)
+      free(pmaps[i].user);
+    if (pmaps[i].pass)
+      free(pmaps[i].pass);
   }
 }
 
@@ -486,7 +498,8 @@ static char *winet_get_syserror(void) {
 
   LocalFree(msg);
 
-  if ((len = strlen(emsg)) > 0) emsg[len - 1] = '\0';
+  if ((len = strlen(emsg)) > 0)
+    emsg[len - 1] = '\0';
 
   return emsg;
 }
@@ -560,7 +573,8 @@ err5:
 err4:
   CloseHandle(*err);
 err3:
-  if (p2s_their) CloseHandle(p2s_their);
+  if (p2s_their)
+    CloseHandle(p2s_their);
   CloseHandle(*pPipeOurRead);
 err2:
   CloseHandle(*pPipeOurWrite);
@@ -661,7 +675,8 @@ static int winet_serve_client(thread_data_t *thd) {
     winet_log(WINET_LOG_MESSAGE, "[%s] %s: process created: cmdln='%s'\n",
               WINET_APPNAME, timestamp(), pm->cmdline);
   } else {
-    if (winet_user_handle(pm, &husr) < 0) goto spawn_failed;
+    if (winet_user_handle(pm, &husr) < 0)
+      goto spawn_failed;
     if (!ImpersonateLoggedOnUser(husr)) {
       winet_log(WINET_LOG_ERROR,
                 "[%s] unable to impersonate user: user='%s' err='%s'\n",
@@ -742,7 +757,8 @@ static int winet_handle_client(portmap_t *pm, SOCKET asock,
   HANDLE hthr;
   thread_data_t *thd;
 
-  if (!(thd = (thread_data_t *)malloc(sizeof(thread_data_t)))) return -1;
+  if (!(thd = (thread_data_t *)malloc(sizeof(thread_data_t))))
+    return -1;
 
   thd->pm = pm;
   thd->asock = asock;
@@ -781,11 +797,14 @@ int winet_main(int argc, char const **argv) {
 
   for (i = 1; i < argc; i++) {
     if (!strcmp(argv[i], "--cfgfile")) {
-      if (++i < argc) cfgfile = argv[i];
+      if (++i < argc)
+        cfgfile = argv[i];
     } else if (!strcmp(argv[i], "--timeout")) {
-      if (++i < argc) sk_timeout = atoi(argv[i]);
+      if (++i < argc)
+        sk_timeout = atoi(argv[i]);
     } else if (!strcmp(argv[i], "--linger-timeout")) {
-      if (++i < argc) linger_timeo = atoi(argv[i]);
+      if (++i < argc)
+        linger_timeo = atoi(argv[i]);
     }
   }
   if (!cfgfile) {
@@ -829,7 +848,8 @@ int winet_main(int argc, char const **argv) {
   rc = 0;
   for (; !stopsvc;) {
     FD_ZERO(&lsnset);
-    for (i = 0; i < npmaps; i++) FD_SET(pmaps[i].sock, &lsnset);
+    for (i = 0; i < npmaps; i++)
+      FD_SET(pmaps[i].sock, &lsnset);
 
     tmo.tv_sec = ACCEPT_TIMEOUT;
     tmo.tv_usec = 0;
@@ -841,7 +861,8 @@ int winet_main(int argc, char const **argv) {
       continue;
     }
     for (i = 0; i < npmaps; i++) {
-      if (!FD_ISSET(pmaps[i].sock, &lsnset)) continue;
+      if (!FD_ISSET(pmaps[i].sock, &lsnset))
+        continue;
 
       adrlen = sizeof(saddr);
       if ((asock = accept(pmaps[i].sock, (struct sockaddr *)&saddr, &adrlen)) !=

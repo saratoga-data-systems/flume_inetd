@@ -64,16 +64,20 @@ static char **get_ascii_argv(int argc, LPWSTR *argv) {
   int len;
   char **aargv;
 
-  if (!(aargv = (char **)malloc(sizeof(char *) * ((size_t)argc + 1)))) return NULL;
+  if (!(aargv = (char **)malloc(sizeof(char *) * ((size_t)argc + 1))))
+    return NULL;
   aargv[argc] = NULL;
   for (i = 0; i < argc; i++) {
     wlen = wcslen(argv[i]);
     // get length for the converted arg
-    if (!(len = WideCharToMultiByte(CP_ACP, 0, argv[i], (int)wlen, NULL, 0, NULL, NULL))) {
+    if (!(len = WideCharToMultiByte(CP_ACP, 0, argv[i], (int)wlen, NULL, 0,
+                                    NULL, NULL))) {
       return NULL;
     }
-    if (!(*(aargv + i) = (char *)malloc(len))) return NULL;
-    if (!WideCharToMultiByte(CP_ACP, 0, argv[i], (int)wlen, *(aargv + i), len, NULL, NULL)) {
+    if (!(*(aargv + i) = (char *)malloc(len)))
+      return NULL;
+    if (!WideCharToMultiByte(CP_ACP, 0, argv[i], (int)wlen, *(aargv + i), len,
+                             NULL, NULL)) {
       return NULL;
     }
   }
@@ -128,13 +132,13 @@ static void WINAPI service_main(DWORD argc, LPTSTR *argv) {
 
 static void WINAPI service_ctrl(DWORD cctrl) {
   switch (cctrl) {
-    case SERVICE_CONTROL_STOP:
-      report_to_scm(SERVICE_STOP_PENDING, NO_ERROR, 4000);
-      winet_stop_service();
-      return;
+  case SERVICE_CONTROL_STOP:
+    report_to_scm(SERVICE_STOP_PENDING, NO_ERROR, 4000);
+    winet_stop_service();
+    return;
 
-    case SERVICE_CONTROL_INTERROGATE:
-      break;
+  case SERVICE_CONTROL_INTERROGATE:
+    break;
   }
 
   report_to_scm(sstat.dwCurrentState, NO_ERROR, 0);
@@ -211,9 +215,9 @@ static int install_service(void) {
       sd.lpDescription = szDesc;
 
       if (!ChangeServiceConfig2(
-              schsvc,                      // handle to service
-              SERVICE_CONFIG_DESCRIPTION,  // change: description
-              &sd)) {                      // new description
+              schsvc,                     // handle to service
+              SERVICE_CONFIG_DESCRIPTION, // change: description
+              &sd)) {                     // new description
         printf("ChangeServiceConfig2 description failed\n");
       }
 
@@ -229,8 +233,8 @@ static int install_service(void) {
       sfa.lpsaActions = &sa;
 
       if (!ChangeServiceConfig2(
-              schsvc,                          // handle to service
-              SERVICE_CONFIG_FAILURE_ACTIONS,  // change: failure actions
+              schsvc,                         // handle to service
+              SERVICE_CONFIG_FAILURE_ACTIONS, // change: failure actions
               &sfa)) {
         printf("ChangeServiceConfig2 failure actions failed\n");
       }
@@ -239,8 +243,8 @@ static int install_service(void) {
       sfaf.fFailureActionsOnNonCrashFailures = TRUE;
 
       if (!ChangeServiceConfig2(
-              schsvc,                               // handle to service
-              SERVICE_CONFIG_FAILURE_ACTIONS_FLAG,  // change: failure actions
+              schsvc,                              // handle to service
+              SERVICE_CONFIG_FAILURE_ACTIONS_FLAG, // change: failure actions
               &sfaf)) {
         printf("ChangeServiceConfig2 failure actions flag failed\n");
       }
@@ -325,11 +329,11 @@ static int debug_service(int argc, char const **argv) {
 
 static BOOL WINAPI ctrl_handler(DWORD ctrlc) {
   switch (ctrlc) {
-    case CTRL_BREAK_EVENT:
-    case CTRL_C_EVENT:
-      _tprintf(_TEXT("Stopping %s.\n"), _TEXT(WINET_APPNAME));
-      winet_stop_service();
-      return TRUE;
+  case CTRL_BREAK_EVENT:
+  case CTRL_C_EVENT:
+    _tprintf(_TEXT("Stopping %s.\n"), _TEXT(WINET_APPNAME));
+    winet_stop_service();
+    return TRUE;
   }
 
   return FALSE;
@@ -351,7 +355,8 @@ static LPTSTR get_last_errmsg(LPTSTR buf, DWORD size) {
     _stprintf(buf, _TEXT("%s (0x%x)"), tmp, GetLastError());
   }
 
-  if (tmp) LocalFree((HLOCAL)tmp);
+  if (tmp)
+    LocalFree((HLOCAL)tmp);
 
   return buf;
 }
