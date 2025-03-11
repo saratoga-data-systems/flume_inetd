@@ -29,6 +29,7 @@
 #pragma comment(lib, "odbc32.lib")
 #pragma comment(lib, "odbccp32.lib")
 #pragma comment(lib, "ws2_32.lib")
+//#pragma comment(lib, "shlwapi.lib")
 
 #include <winsock2.h>
 
@@ -36,7 +37,10 @@
 
 #include <tchar.h>
 
+//#include <Shlobj.h>
+
 #include "wininetd.h"
+
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -799,6 +803,15 @@ int winet_main(int argc, char const **argv) {
     WSACleanup();
     return 2;
   }
+
+  /*
+#pragma warning(disable : 4244)  // TODO - fix wchar to char
+  PWSTR wpath;
+  SHGetKnownFolderPath(&FOLDERID_Profile, 0, NULL, &wpath);
+  wstring ws(wpath);     // convert to a wide string
+  CoTaskMemFree(wpath);  // and free up the wpath
+  SetCurrentDirectoryW(ws);
+  */
 
   /* init env */
   SetEnvironmentVariable(CLIENT_IP, NULL);

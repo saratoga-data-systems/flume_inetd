@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "wininetd.h"
 
 // depend both on the TCP/IP stack and the Ancillary Function Driver for Winsock
@@ -199,7 +200,7 @@ static int install_service(void) {
 
   if ((schscm = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS)) != NULL) {
     schsvc = CreateService(schscm, _TEXT(WINET_APPNAME), _TEXT(WINET_APPNAME),
-                           SERVICE_ALL_ACCESS, SERVICE_WIN32_OWN_PROCESS,
+                           SERVICE_ALL_ACCESS, SERVICE_USER_OWN_PROCESS,
                            SERVICE_AUTO_START, SERVICE_ERROR_NORMAL, path, NULL,
                            NULL, _TEXT(SVCDEPS), NULL, NULL);
 
@@ -248,17 +249,21 @@ static int install_service(void) {
 
       if (StartService(schsvc, 0, NULL)) {
         _tprintf(_TEXT("%s started.\n"), _TEXT(WINET_APPNAME));
+      } else {
+        _tprintf(_TEXT("StartService failed - %s\n"),
+                 get_last_errmsg(lsterrs, COUNTOF(lsterrs)));
       }
 
       CloseServiceHandle(schsvc);
-    } else
+    } else {
       _tprintf(_TEXT("CreateService failed - %s\n"),
                get_last_errmsg(lsterrs, COUNTOF(lsterrs)));
-
+    }
     CloseServiceHandle(schscm);
-  } else
+  } else {
     _tprintf(_TEXT("OpenSCManager failed - %s\n"),
              get_last_errmsg(lsterrs, COUNTOF(lsterrs)));
+  }
 
   return 0;
 }
